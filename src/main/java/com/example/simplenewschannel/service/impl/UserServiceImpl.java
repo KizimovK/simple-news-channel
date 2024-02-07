@@ -4,13 +4,12 @@ import com.example.simplenewschannel.entity.User;
 import com.example.simplenewschannel.repository.UserRepository;
 import com.example.simplenewschannel.service.UserService;
 import com.example.simplenewschannel.utils.BeanUtils;
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class UserServiceImpl implements UserService {

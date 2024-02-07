@@ -10,7 +10,7 @@ public class BeanUtils {
     @SneakyThrows
     public void notNullCopyProperties(Object source, Object destination) {
         Class<?> clazz = source.getClass();
-        Field[] fields = clazz.getFields();
+        Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
             Object value = field.get(source);

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -14,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-    @Column(length = 50)
-    String newsCategory;
+    private Long id;
+    @Column(length = 50, unique = true)
+    private String newsCategory;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<News> newsCategoryList;
 }
