@@ -4,7 +4,7 @@ import com.example.simplenewschannel.entity.CommentNews;
 
 import java.util.List;
 
-public interface CommentNewsService {
+public interface CommentsService {
     List<CommentNews> findAll();
     CommentNews findById(long id);
 }

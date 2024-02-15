@@ -31,5 +31,9 @@ public class News {
     @CreationTimestamp
     private Instant timeCreate;
     @OneToMany(mappedBy = "news", cascade = CascadeType.ALL)
-    List<CommentNews> commentNewsList;
+    List<CommentNews> commentsNews;
+
+    public void addCommentNews(CommentNews commentNews){
+        commentsNews.add(commentNews);
+    }
 }

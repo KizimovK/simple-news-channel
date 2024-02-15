@@ -2,17 +2,17 @@ package com.example.simplenewschannel.service.impl;
 
 import com.example.simplenewschannel.entity.CommentNews;
 import com.example.simplenewschannel.repository.CommentNewsRepository;
-import com.example.simplenewschannel.service.CommentNewsService;
+import com.example.simplenewschannel.service.CommentsService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.List;
 @Component
-public class CommentNewsServiceImpl implements CommentNewsService {
+public class CommentsServiceImpl implements CommentsService {
     private final CommentNewsRepository commentNewsRepository;
 
-    public CommentNewsServiceImpl(CommentNewsRepository commentNewsRepository) {
+    public CommentsServiceImpl(CommentNewsRepository commentNewsRepository) {
         this.commentNewsRepository = commentNewsRepository;
     }
 

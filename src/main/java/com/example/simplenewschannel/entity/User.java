@@ -25,4 +25,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CommentNews> commentsUser;
 
+    public void addNews(News news){
+        newsUser.add(news);
+    }
+    public void addComment(CommentNews commentNews){
+        commentsUser.add(commentNews);
+    }
+
 }
