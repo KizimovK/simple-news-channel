@@ -1,35 +1,39 @@
 package com.example.simplenewschannel.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+
 @AllArgsConstructor
-@RequiredArgsConstructor
-@Builder
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 @Entity(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 50, unique = true)
+    @Column(length = 50, unique = true, nullable = false)
     private String name;
+    @Column(nullable = false, unique = true)
     private String email;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private List<News> newsList = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<News> newsUser;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<CommentNews> commentsUser;
+    private List<Comment> commentsList = new ArrayList<>();
 
     public void addNews(News news){
-        newsUser.add(news);
+        news.setAuthor(this);
+        newsList.add(news);
     }
-    public void addComment(CommentNews commentNews){
-        commentsUser.add(commentNews);
+    public void addComment(Comment comment){
+        comment.setUser(this);
+        commentsList.add(comment);
     }
 
 }

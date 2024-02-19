@@ -1,6 +1,6 @@
 package com.example.simplenewschannel.mapper;
 
-import com.example.simplenewschannel.dto.request.CategoryRequest;
+import com.example.simplenewschannel.dto.request.UpsertCategoryRequest;
 import com.example.simplenewschannel.dto.response.CategoryListResponse;
 import com.example.simplenewschannel.dto.response.CategoryResponse;
 import com.example.simplenewschannel.entity.Category;
@@ -19,5 +19,5 @@ public interface CategoryMapper {
                 .map(this::toCategoryResponse).collect(Collectors.toList()));
         return categoryListResponse;
     }
-     Category requestToCategory(CategoryRequest request);
+     Category requestToCategory(UpsertCategoryRequest request);
 }

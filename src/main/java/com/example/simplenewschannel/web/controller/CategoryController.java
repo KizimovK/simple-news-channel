@@ -1,6 +1,6 @@
 package com.example.simplenewschannel.web.controller;
 
-import com.example.simplenewschannel.dto.request.CategoryRequest;
+import com.example.simplenewschannel.dto.request.UpsertCategoryRequest;
 import com.example.simplenewschannel.dto.response.CategoryListResponse;
 import com.example.simplenewschannel.dto.response.CategoryResponse;
 import com.example.simplenewschannel.entity.Category;
@@ -28,7 +28,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryMapper.toCategoryResponse(categoryService.findById(id)));
     }
     @PostMapping
-    public ResponseEntity<CategoryResponse> createNewsCategory(@RequestBody CategoryRequest request){
+    public ResponseEntity<CategoryResponse> createNewsCategory(@RequestBody UpsertCategoryRequest request){
         Category categoryNew = categoryService.create(categoryMapper.requestToCategory(request));
         return ResponseEntity.ok(categoryMapper.toCategoryResponse(categoryNew));
     }

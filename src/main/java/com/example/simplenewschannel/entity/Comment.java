@@ -8,14 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
 @Entity(name = "comments")
-public class CommentNews {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

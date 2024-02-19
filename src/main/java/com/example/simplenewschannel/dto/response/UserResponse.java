@@ -1,6 +1,6 @@
 package com.example.simplenewschannel.dto.response;
 
-import com.example.simplenewschannel.entity.CommentNews;
+import com.example.simplenewschannel.entity.Comment;
 import com.example.simplenewschannel.entity.News;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,12 +14,6 @@ import java.util.List;
 public class UserResponse {
 
     private long id;
-
     private String name;
-
     private String email;
-
-    private List<News> newsUser;
-
-    private List<CommentNews> commentsUser;
 }

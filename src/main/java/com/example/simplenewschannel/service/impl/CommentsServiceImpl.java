@@ -1,6 +1,6 @@
 package com.example.simplenewschannel.service.impl;
 
-import com.example.simplenewschannel.entity.CommentNews;
+import com.example.simplenewschannel.entity.Comment;
 import com.example.simplenewschannel.repository.CommentNewsRepository;
 import com.example.simplenewschannel.service.CommentsService;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,12 +17,12 @@ public class CommentsServiceImpl implements CommentsService {
     }
 
     @Override
-    public List<CommentNews> findAll() {
+    public List<Comment> findAll() {
         return commentNewsRepository.findAll();
     }
 
     @Override
-    public CommentNews findById(long id) {
+    public Comment findById(long id) {
         return commentNewsRepository.findById(id).orElseThrow(()->
                 new EntityNotFoundException(
                         MessageFormat.format("Комментарий с таким ID {0} не найден ",id))

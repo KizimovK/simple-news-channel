@@ -3,24 +3,27 @@ package com.example.simplenewschannel.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@ToString
 @Entity(name = "categories")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(length = 50, unique = true)
-    private String categoryName;
+    @Column(length = 50, unique = true, nullable = false)
+    private String name;
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @ToString.Exclude
-    @Builder.Default
-    private List<News> newsList;
+    private List<News> newsList = new ArrayList<>();
 
     public void addNews(News news){
+        news.setCategory(this);
         newsList.add(news);
     }
 }

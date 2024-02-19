@@ -1,6 +1,6 @@
 package com.example.simplenewschannel.web.controller;
 
-import com.example.simplenewschannel.dto.request.NewsRequest;
+import com.example.simplenewschannel.dto.request.UpsertNewsRequest;
 import com.example.simplenewschannel.dto.response.NewsListResponse;
 import com.example.simplenewschannel.dto.response.NewsResponse;
 import com.example.simplenewschannel.entity.News;
@@ -29,7 +29,7 @@ public class NewsController {
         return ResponseEntity.ok(newsMapper.newsToResponse(newsService.findById(id)));
     }
     @PostMapping
-    public ResponseEntity<NewsResponse> createNews(@RequestBody NewsRequest request){
+    public ResponseEntity<NewsResponse> createNews(@RequestBody UpsertNewsRequest request){
         News newNews = newsService.save(newsMapper.requestToNews(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(newsMapper.newsToResponse(newNews));
     }

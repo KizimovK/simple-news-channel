@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryRequest {
-    private String newsCategory;
+public class UpsertCategoryRequest {
+    private String name;
 }

@@ -1,6 +1,6 @@
 package com.example.simplenewschannel.mapper;
 
-import com.example.simplenewschannel.dto.request.UserRequest;
+import com.example.simplenewschannel.dto.request.UpsertUserRequest;
 import com.example.simplenewschannel.dto.response.UserListResponse;
 import com.example.simplenewschannel.dto.response.UserResponse;
 import com.example.simplenewschannel.entity.User;
@@ -15,12 +15,7 @@ import java.util.stream.Collectors;
 public interface UserMapper {
     UserResponse userToResponse(User user);
     @Mapping(source = "userId", target = "id")
-    User requestToUser(long userId, UserRequest request);
-    User requestToUser(UserRequest request);
+    User requestToUser(long userId, UpsertUserRequest request);
+    User requestToUser(UpsertUserRequest request);
 
-    default UserListResponse userListResponseList(List<User> usersList){
-        UserListResponse userListResponse = new UserListResponse();
-        userListResponse.setUsers(usersList.stream().map(this::userToResponse).collect(Collectors.toList()));
-        return userListResponse;
-    }
 }

@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category findByName(String categoryName) {
-        return categoryRepository.findByCategoryName(categoryName).orElseThrow(()->
+        return categoryRepository.findByName(categoryName).orElseThrow(()->
                 new EntityNotFoundException(
                         MessageFormat.format("Категория с таким названием {0} не найдена ", categoryName)));
     }

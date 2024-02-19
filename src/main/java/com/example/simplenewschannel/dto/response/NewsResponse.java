@@ -1,7 +1,7 @@
 package com.example.simplenewschannel.dto.response;
 
 import com.example.simplenewschannel.entity.Category;
-import com.example.simplenewschannel.entity.CommentNews;
+import com.example.simplenewschannel.entity.Comment;
 import com.example.simplenewschannel.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,10 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 public class NewsResponse {
     private long id;
-    private User user;
+    private User author;
     private Category category;
     private String title;
     private String content;
     private Instant timeCreate;
-    List<CommentNews> commentNewsList;
+    List<Comment> commentNewsList;
 }

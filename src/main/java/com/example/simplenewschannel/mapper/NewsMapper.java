@@ -1,6 +1,6 @@
 package com.example.simplenewschannel.mapper;
 
-import com.example.simplenewschannel.dto.request.NewsRequest;
+import com.example.simplenewschannel.dto.request.UpsertNewsRequest;
 import com.example.simplenewschannel.dto.response.NewsListResponse;
 import com.example.simplenewschannel.dto.response.NewsResponse;
 import com.example.simplenewschannel.entity.News;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface NewsMapper {
     NewsResponse newsToResponse(News news);
-    News requestToNews(NewsRequest request);
+    News requestToNews(UpsertNewsRequest request);
 
     default NewsListResponse newsListToResponseList(List<News> newsList){
         NewsListResponse newsListResponse = new NewsListResponse();
