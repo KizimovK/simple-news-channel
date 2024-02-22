@@ -7,6 +7,7 @@ import com.example.simplenewschannel.dto.response.UserResponse;
 import com.example.simplenewschannel.entity.User;
 import com.example.simplenewschannel.mapper.UserMapper;
 import com.example.simplenewschannel.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ModelListResponse<UserResponse>> findAll(PaginationRequest request){
+    public ResponseEntity<ModelListResponse<UserResponse>> findAll(@Valid PaginationRequest request){
         Page<User> userPage = userService.findAll(request.pageRequest());
         return ResponseEntity.ok(ModelListResponse.<UserResponse>builder()
                 .totalCount(userPage.getTotalElements())

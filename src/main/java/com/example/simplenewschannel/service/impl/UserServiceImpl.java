@@ -59,4 +59,10 @@ public class UserServiceImpl implements UserService {
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+
+    @Override
+    public User findByName(String name) {
+        return userRepository.findByName(name).orElseThrow(()-> new EntityNotFoundException(
+                MessageFormat.format("Пользователь (автор) с таким именем {0} не найден", name)));
+    }
 }

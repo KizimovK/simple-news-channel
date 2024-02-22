@@ -10,6 +10,7 @@ import java.util.List;
 public interface UserService {
     User save(User user);
     User findById(Long id);
+    User findByName(String name);
     User update(User user);
     void deleteById(Long id);
     Page<User> findAll(Pageable pageable);

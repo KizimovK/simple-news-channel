@@ -25,6 +25,7 @@ public class User {
     @ToString.Exclude
     private List<News> newsList = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Comment> commentsList = new ArrayList<>();
 
     public void addNews(News news){

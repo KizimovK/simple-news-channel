@@ -1,13 +1,17 @@
 package com.example.simplenewschannel.service.impl;
 
 import com.example.simplenewschannel.entity.Category;
+import com.example.simplenewschannel.exception.EntityExistsException;
+import com.example.simplenewschannel.exception.EntityNotFoundException;
 import com.example.simplenewschannel.repository.CategoryRepository;
 import com.example.simplenewschannel.service.CategoryService;
-import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.util.List;
+
 @Component
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
@@ -18,8 +22,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public Page<Category> findAll(PageRequest pageRequest) {
+        return categoryRepository.findAll(pageRequest);
     }
 
     @Override
@@ -32,6 +36,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category create(Category category) {
+        if (categoryRepository.existsByName(category.getName())){
+            throw new EntityExistsException(
+                    MessageFormat.format("Такая категория с таким названием, {0}, уже существует"
+                            ,category.getName()));
+        }
         return categoryRepository.save(category);
     }
 

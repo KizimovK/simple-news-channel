@@ -1,11 +1,15 @@
 package com.example.simplenewschannel.web.controller;
 
+import com.example.simplenewschannel.dto.request.PaginationRequest;
 import com.example.simplenewschannel.dto.request.UpsertNewsRequest;
-import com.example.simplenewschannel.dto.response.NewsListResponse;
+import com.example.simplenewschannel.dto.response.BriefNewsResponse;
+import com.example.simplenewschannel.dto.response.ModelListResponse;
 import com.example.simplenewschannel.dto.response.NewsResponse;
 import com.example.simplenewschannel.entity.News;
 import com.example.simplenewschannel.mapper.NewsMapper;
 import com.example.simplenewschannel.service.NewsService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +25,12 @@ public class NewsController {
         this.newsMapper = newsMapper;
     }
     @GetMapping
-    public ResponseEntity<NewsListResponse> findAll(){
-        return ResponseEntity.ok(newsMapper.newsListToResponseList(newsService.findAll()));
+    public ResponseEntity<ModelListResponse<BriefNewsResponse>> findAll(@Valid PaginationRequest request){
+        Page<News> allNews = newsService.findAll(request.pageRequest());
+        return ResponseEntity.ok(ModelListResponse.<BriefNewsResponse>builder()
+                .totalCount(allNews.getTotalElements())
+                .data(allNews.stream().map(newsMapper::newsToBriefResponse).toList())
+                .build());
     }
     @GetMapping("/{id}")
     public ResponseEntity<NewsResponse> findById(@PathVariable long id){
@@ -30,7 +38,8 @@ public class NewsController {
     }
     @PostMapping
     public ResponseEntity<NewsResponse> createNews(@RequestBody UpsertNewsRequest request){
-        News newNews = newsService.save(newsMapper.requestToNews(request));
+        News newNews = newsService.save(newsMapper.requestToNews(request)
+                ,request.getAuthorName(),request.getCategoryName());
         return ResponseEntity.status(HttpStatus.CREATED).body(newsMapper.newsToResponse(newNews));
     }
 
