@@ -12,4 +12,7 @@ public interface NewsService {
     Page<News> findAll(PageRequest pageRequest);
     News save(News news, String userName, String categoryName);
 
+    News updateNews(News news, long id);
+
+    void deleteById(long id);
 }

@@ -11,7 +11,8 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CommentsMapper {
-    CommentResponse commentToResponse(Comment byId);
+
+    CommentResponse commentToResponse(Comment comment);
     default CommentsListResponse commentsListToResponseList(List<Comment> commentsList){
         CommentsListResponse commentsListResponse = new CommentsListResponse();
         commentsListResponse.setCommentsRespnseList(commentsList.stream()

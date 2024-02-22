@@ -42,6 +42,17 @@ public class NewsController {
                 ,request.getAuthorName(),request.getCategoryName());
         return ResponseEntity.status(HttpStatus.CREATED).body(newsMapper.newsToResponse(newNews));
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<NewsResponse> updateNews(@PathVariable long id,
+                                                   @RequestBody UpsertNewsRequest request){
+        News updateNews = newsService.updateNews(newsMapper.requestToNews(request), id);
+        return ResponseEntity.ok(newsMapper.newsToResponse(updateNews));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNewsById(@PathVariable long id, long userId){
+        newsService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }

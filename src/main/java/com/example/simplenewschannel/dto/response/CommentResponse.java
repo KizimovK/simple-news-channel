@@ -11,10 +11,10 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentResponse {
-    //????????????????????????????????
-    private Long id;
-    private News news;
-    private User user;
+
+    private long id;
+    private long newsId;
+    private String userName;
     private String commentText;
     private Instant timeCreate;
 }

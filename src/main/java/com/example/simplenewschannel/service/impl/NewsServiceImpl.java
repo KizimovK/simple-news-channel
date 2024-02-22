@@ -7,6 +7,7 @@ import com.example.simplenewschannel.repository.NewsRepository;
 import com.example.simplenewschannel.service.CategoryService;
 import com.example.simplenewschannel.service.NewsService;
 import com.example.simplenewschannel.service.UserService;
+import com.example.simplenewschannel.utils.BeanUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +44,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-//    @Transactional
+    @Transactional
     public News save(News news, String userName, String categoryName) {
         User author = userService.findByName(userName);
         Category category = categoryService.findByName(categoryName);
@@ -52,5 +53,17 @@ public class NewsServiceImpl implements NewsService {
         author.addNews(news);
         category.addNews(news);
         return newsRepository.save(news);
+    }
+
+    @Override
+    public News updateNews(News news, long id) {
+        News existedNews = findById(id);
+        BeanUtils.notNullCopyProperties(news, existedNews);
+        return newsRepository.save(existedNews);
+    }
+
+    @Override
+    public void deleteById(long id) {
+        newsRepository.deleteById(id);
     }
 }
