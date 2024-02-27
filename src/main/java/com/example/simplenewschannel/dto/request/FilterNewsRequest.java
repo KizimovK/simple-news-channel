@@ -5,12 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpsertUserRequest {
-    @NotNull
-    private String name;
-    @NotNull
-    private String email;
+public class FilterNewsRequest {
+    private String categoryName;
+    private String authorName;
+    private Instant createBefore;
+    private Instant updateBefore;
 }

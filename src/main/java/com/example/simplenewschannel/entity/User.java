@@ -2,6 +2,7 @@ package com.example.simplenewschannel.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @Setter
 @ToString
 @Entity(name = "users")
+@FieldNameConstants
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

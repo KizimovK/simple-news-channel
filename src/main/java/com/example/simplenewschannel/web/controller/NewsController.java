@@ -1,5 +1,7 @@
 package com.example.simplenewschannel.web.controller;
 
+import com.example.simplenewschannel.aop.CheckingUser;
+import com.example.simplenewschannel.dto.request.FilterNewsRequest;
 import com.example.simplenewschannel.dto.request.PaginationRequest;
 import com.example.simplenewschannel.dto.request.UpsertNewsRequest;
 import com.example.simplenewschannel.dto.response.BriefNewsResponse;
@@ -24,24 +26,35 @@ public class NewsController {
         this.newsService = newsService;
         this.newsMapper = newsMapper;
     }
+//    @GetMapping
+//    public ResponseEntity<ModelListResponse<BriefNewsResponse>> findAll(@Valid PaginationRequest request){
+//        Page<News> allNews = newsService.findAll(request.pageRequest());
+//        return ResponseEntity.ok(ModelListResponse.<BriefNewsResponse>builder()
+//                .totalCount(allNews.getTotalElements())
+//                .data(allNews.stream().map(newsMapper::newsToBriefResponse).toList())
+//                .build());
+//    }
     @GetMapping
-    public ResponseEntity<ModelListResponse<BriefNewsResponse>> findAll(@Valid PaginationRequest request){
-        Page<News> allNews = newsService.findAll(request.pageRequest());
+    public ResponseEntity<ModelListResponse<BriefNewsResponse>> filterBy(@Valid PaginationRequest paginationRequest,
+                                                                         FilterNewsRequest filterRequest){
+        Page<News> filterNews = newsService.filterBy(paginationRequest, filterRequest);
         return ResponseEntity.ok(ModelListResponse.<BriefNewsResponse>builder()
-                .totalCount(allNews.getTotalElements())
-                .data(allNews.stream().map(newsMapper::newsToBriefResponse).toList())
+                .totalCount(filterNews.getTotalElements())
+                .data(filterNews.stream().map(newsMapper::newsToBriefResponse).toList())
                 .build());
     }
     @GetMapping("/{id}")
     public ResponseEntity<NewsResponse> findById(@PathVariable long id){
         return ResponseEntity.ok(newsMapper.newsToResponse(newsService.findById(id)));
     }
+
     @PostMapping
     public ResponseEntity<NewsResponse> createNews(@RequestBody UpsertNewsRequest request){
         News newNews = newsService.save(newsMapper.requestToNews(request)
                 ,request.getAuthorName(),request.getCategoryName());
         return ResponseEntity.status(HttpStatus.CREATED).body(newsMapper.newsToResponse(newNews));
     }
+    @CheckingUser
     @PutMapping("/{id}")
     public ResponseEntity<NewsResponse> updateNews(@PathVariable long id,
                                                    @RequestBody UpsertNewsRequest request){
@@ -49,7 +62,7 @@ public class NewsController {
         return ResponseEntity.ok(newsMapper.newsToResponse(updateNews));
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNewsById(@PathVariable long id, long userId){
+    public ResponseEntity<Void> deleteNewsById(@PathVariable long id){
         newsService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

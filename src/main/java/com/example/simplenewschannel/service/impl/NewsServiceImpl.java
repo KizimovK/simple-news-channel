@@ -1,9 +1,12 @@
 package com.example.simplenewschannel.service.impl;
 
+import com.example.simplenewschannel.dto.request.FilterNewsRequest;
+import com.example.simplenewschannel.dto.request.PaginationRequest;
 import com.example.simplenewschannel.entity.Category;
 import com.example.simplenewschannel.entity.News;
 import com.example.simplenewschannel.entity.User;
 import com.example.simplenewschannel.repository.NewsRepository;
+import com.example.simplenewschannel.repository.NewsSpecification;
 import com.example.simplenewschannel.service.CategoryService;
 import com.example.simplenewschannel.service.NewsService;
 import com.example.simplenewschannel.service.UserService;
@@ -11,6 +14,7 @@ import com.example.simplenewschannel.utils.BeanUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +60,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public News updateNews(News news, long id) {
         News existedNews = findById(id);
         BeanUtils.notNullCopyProperties(news, existedNews);
@@ -65,5 +70,10 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public void deleteById(long id) {
         newsRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<News> filterBy(PaginationRequest paginationRequest, FilterNewsRequest filterRequest) {
+        return newsRepository.findAll(NewsSpecification.withFilter(filterRequest),paginationRequest.pageRequest());
     }
 }
