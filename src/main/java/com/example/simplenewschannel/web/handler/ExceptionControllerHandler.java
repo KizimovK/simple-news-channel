@@ -40,5 +40,5 @@ public class ExceptionControllerHandler {
                 .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
         return ResponseEntity.badRequest().body(new ExceptionResponse(errorMessages.toString()));
     }
-
+    //Todo: make AccessiblyCheckException handler
 }

@@ -22,8 +22,16 @@ public class CommentAccessCheckService implements AccessCheckService {
     @Override
     public boolean getResultCheck(HttpServletRequest request, Object[] arguments) {
         var pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        var requestBody = Arrays.stream(arguments).filter(o -> o instanceof UpsertCommentRequest).findFirst().get();
-        long userId = ((UpsertCommentRequest) requestBody).getUserId();
+        long userId = 0;
+        String methodHttp = request.getMethod();
+        if (methodHttp.equals("PUT")) {
+            var requestBody = Arrays.stream(arguments).filter(o -> o instanceof UpsertCommentRequest).findFirst().get();
+            userId = ((UpsertCommentRequest) requestBody).getUserId();
+        }
+        if (methodHttp.equals("DELETE")){
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            userId = Long.parseLong(Arrays.stream(parameterMap.get("userId")).findFirst().get());
+        }
         long id = Long.parseLong(pathVariables.get("id"));
         return commentRepository.existsByIdAndUserId(id, userId);
     }

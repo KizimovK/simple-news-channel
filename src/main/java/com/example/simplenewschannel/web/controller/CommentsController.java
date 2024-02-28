@@ -1,5 +1,7 @@
 package com.example.simplenewschannel.web.controller;
 
+import com.example.simplenewschannel.aop.AccessType;
+import com.example.simplenewschannel.aop.Accessible;
 import com.example.simplenewschannel.dto.request.PaginationRequest;
 import com.example.simplenewschannel.dto.request.UpsertCommentRequest;
 import com.example.simplenewschannel.dto.response.CommentResponse;
@@ -42,13 +44,15 @@ public class CommentsController {
                 request.getNewsId(),request.getUserId());
         return ResponseEntity.ok(commentsMapper.commentToResponse(newComment));
     }
+    @Accessible(checkBy = AccessType.COMMENT)
     @PutMapping("/{id}")
-    ResponseEntity<CommentResponse> updateComment(@RequestBody UpsertCommentRequest request, @PathVariable long id){
+    ResponseEntity<CommentResponse> updateComment(@PathVariable long id, @RequestBody UpsertCommentRequest request){
         Comment updateComment = commentsService.update(commentsMapper.requestToComment(request), id);
         return ResponseEntity.ok(commentsMapper.commentToResponse(updateComment));
     }
+    @Accessible(checkBy = AccessType.COMMENT)
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteComment(@PathVariable long id){
+    ResponseEntity<Void> deleteComment(@PathVariable long id, long userId){
         commentsService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

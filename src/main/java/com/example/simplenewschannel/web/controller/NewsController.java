@@ -62,9 +62,9 @@ public class NewsController {
         News updateNews = newsService.updateNews(newsMapper.requestToNews(request), id);
         return ResponseEntity.ok(newsMapper.newsToResponse(updateNews));
     }
-    //ToDo: make access
+    @Accessible(checkBy = AccessType.NEWS)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNewsById(@PathVariable long id){
+    public ResponseEntity<Void> deleteNewsById(@PathVariable long id, long userId){
         newsService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
