@@ -13,11 +13,9 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.text.MessageFormat;
+
 import java.util.Map;
 
-
-//Todo: доделать AOP
 @Aspect
 @Component
 @Slf4j
@@ -41,8 +39,8 @@ public class AccessibleAspect {
             throw new IllegalArgumentException("AccessCheckService this type not found");
         }
         if (!accessCheckService.getResultCheck(httpRequest, arguments)){
-            throw new AccessiblyCheckException("the action is not available to the user");
+            throw new AccessiblyCheckException("The action is not available to the user");
         }
-       log.info("Check ok!!!");
+       log.info("The action is available to the user. Check ok!!!");
     }
 }

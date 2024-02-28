@@ -1,6 +1,7 @@
 package com.example.simplenewschannel.web.handler;
 
 import com.example.simplenewschannel.dto.response.ExceptionResponse;
+import com.example.simplenewschannel.exception.AccessiblyCheckException;
 import com.example.simplenewschannel.exception.EntityExistsException;
 import com.example.simplenewschannel.exception.EntityNotFoundException;
 
@@ -40,5 +41,9 @@ public class ExceptionControllerHandler {
                 .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
         return ResponseEntity.badRequest().body(new ExceptionResponse(errorMessages.toString()));
     }
-    //Todo: make AccessiblyCheckException handler
+    @ExceptionHandler(AccessiblyCheckException.class)
+    public ResponseEntity<ExceptionResponse> notAccessiblyCheckedException(AccessiblyCheckException exception){
+        log.error("The user does not have access");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ExceptionResponse(exception.getMessage()));
+    }
 }
