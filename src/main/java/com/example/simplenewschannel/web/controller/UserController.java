@@ -1,5 +1,7 @@
 package com.example.simplenewschannel.web.controller;
 
+import com.example.simplenewschannel.aop.AccessType;
+import com.example.simplenewschannel.aop.Accessible;
 import com.example.simplenewschannel.dto.request.PaginationRequest;
 import com.example.simplenewschannel.dto.request.UpsertUserRequest;
 import com.example.simplenewschannel.dto.response.ModelListResponse;
@@ -41,14 +43,16 @@ public class UserController {
         User newUser = userService.save(userMapper.requestToUser(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.userToResponse(newUser));
     }
+    @Accessible(checkBy = AccessType.USER)
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable("id") long userId, @RequestBody UpsertUserRequest request){
-        User updateUser = userService.update(userMapper.requestToUser(userId,request));
+    public ResponseEntity<UserResponse> updateUser(@PathVariable long id, @RequestBody UpsertUserRequest request){
+        User updateUser = userService.update(userMapper.requestToUser(id,request));
         return ResponseEntity.status(HttpStatus.OK).body(userMapper.userToResponse(updateUser));
     }
+    @Accessible(checkBy = AccessType.USER)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") long userId){
-        userService.deleteById(userId);
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id){
+        userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 

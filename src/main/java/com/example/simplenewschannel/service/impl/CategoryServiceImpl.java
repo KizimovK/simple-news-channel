@@ -9,10 +9,11 @@ import com.example.simplenewschannel.service.CategoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 
-@Component
+@Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 

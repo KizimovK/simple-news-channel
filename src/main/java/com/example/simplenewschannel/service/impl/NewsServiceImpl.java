@@ -14,13 +14,12 @@ import com.example.simplenewschannel.utils.BeanUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 
-@Component
+@Service
 public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
     private final UserService userService;

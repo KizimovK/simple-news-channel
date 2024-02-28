@@ -1,6 +1,7 @@
 package com.example.simplenewschannel.web.controller;
 
-import com.example.simplenewschannel.aop.CheckingUser;
+import com.example.simplenewschannel.aop.AccessType;
+import com.example.simplenewschannel.aop.Accessible;
 import com.example.simplenewschannel.dto.request.FilterNewsRequest;
 import com.example.simplenewschannel.dto.request.PaginationRequest;
 import com.example.simplenewschannel.dto.request.UpsertNewsRequest;
@@ -54,13 +55,14 @@ public class NewsController {
                 ,request.getAuthorName(),request.getCategoryName());
         return ResponseEntity.status(HttpStatus.CREATED).body(newsMapper.newsToResponse(newNews));
     }
-    @CheckingUser
+    @Accessible(checkBy = AccessType.NEWS)
     @PutMapping("/{id}")
     public ResponseEntity<NewsResponse> updateNews(@PathVariable long id,
                                                    @RequestBody UpsertNewsRequest request){
         News updateNews = newsService.updateNews(newsMapper.requestToNews(request), id);
         return ResponseEntity.ok(newsMapper.newsToResponse(updateNews));
     }
+    //ToDo: make access
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNewsById(@PathVariable long id){
         newsService.deleteById(id);
