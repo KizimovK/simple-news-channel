@@ -5,19 +5,21 @@ import com.example.simplenewschannel.dto.request.PaginationRequest;
 import com.example.simplenewschannel.entity.Category;
 import com.example.simplenewschannel.entity.News;
 import com.example.simplenewschannel.entity.User;
+import com.example.simplenewschannel.exception.EntityNotFoundException;
 import com.example.simplenewschannel.repository.NewsRepository;
 import com.example.simplenewschannel.repository.NewsSpecification;
 import com.example.simplenewschannel.service.CategoryService;
 import com.example.simplenewschannel.service.NewsService;
 import com.example.simplenewschannel.service.UserService;
 import com.example.simplenewschannel.utils.BeanUtils;
-import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -74,5 +76,10 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Page<News> filterBy(PaginationRequest paginationRequest, FilterNewsRequest filterRequest) {
         return newsRepository.findAll(NewsSpecification.withFilter(filterRequest),paginationRequest.pageRequest());
+    }
+
+    @Override
+    public List<Long> getAllIdNews() {
+        return newsRepository.findAllId();
     }
 }

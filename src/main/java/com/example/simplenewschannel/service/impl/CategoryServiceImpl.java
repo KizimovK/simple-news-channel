@@ -51,4 +51,9 @@ public class CategoryServiceImpl implements CategoryService {
                 new EntityNotFoundException(
                         MessageFormat.format("Категория с таким названием {0} не найдена ", categoryName)));
     }
+
+    @Override
+    public void deleteAll() {
+        categoryRepository.deleteAll();
+    }
 }

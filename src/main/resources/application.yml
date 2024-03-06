@@ -1,3 +1,6 @@
+evn:
+  example:
+    enabled: true
 spring:
   jpa:
     generate-ddl: true
