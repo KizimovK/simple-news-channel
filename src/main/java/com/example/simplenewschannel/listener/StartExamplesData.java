@@ -4,7 +4,6 @@ import com.example.simplenewschannel.dto.request.UpsertCategoryRequest;
 import com.example.simplenewschannel.dto.request.UpsertCommentRequest;
 import com.example.simplenewschannel.dto.request.UpsertNewsRequest;
 import com.example.simplenewschannel.dto.request.UpsertUserRequest;
-import com.example.simplenewschannel.entity.Comment;
 import com.example.simplenewschannel.mapper.CategoryMapper;
 import com.example.simplenewschannel.mapper.CommentsMapper;
 import com.example.simplenewschannel.mapper.NewsMapper;
@@ -28,9 +27,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -42,8 +44,8 @@ public class StartExamplesData {
     private static final String NEWS_EXAMPLE_FILE = "data/newsExample.json";
     private static final String COMMENT_EXAMPLE_FILE = "data/commentExample.json";
 
-    private final ResourceLoader resourceLoader;
     private final ObjectMapper objectMapper;
+    private final ResourceLoader resourceLoader;
     private final UserService userService;
     private final UserMapper userMapper;
     private final CategoryService categoryService;
@@ -64,46 +66,39 @@ public class StartExamplesData {
     }
 
     private void loadExampleUser() {
-        List<UpsertUserRequest> usersExesmpleList = new ArrayList<>();
-        Resource resource = resourceLoader.getResource("classpath:" + USER_EXAMPLE_FILE);
         userService.deleteAll();
-
-        try (InputStream inputStream = new FileInputStream(resource.getFile())) {
-            TypeReference<List<UpsertUserRequest>> typeRef = new TypeReference<>() {
-            };
-            usersExesmpleList = objectMapper.readValue(inputStream, typeRef);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        usersExesmpleList.forEach(u -> userService.save(userMapper.requestToUser(u)));
-        log.info("Load examples users count {}", usersExesmpleList.size());
+        List<UpsertUserRequest> usersExampleList = loadResourceFromJson(USER_EXAMPLE_FILE)
+                .stream()
+                .map(lhm -> UpsertUserRequest.builder()
+                        .name(lhm.get(UpsertUserRequest.Fields.name))
+                        .email(lhm.get(UpsertUserRequest.Fields.email))
+                        .build()
+                ).toList();
+        usersExampleList.forEach(u -> userService.save(userMapper.requestToUser(u)));
+        log.info("Load examples users count {}", usersExampleList.size());
     }
 
     private void loadExampleCategory() {
-        List<UpsertCategoryRequest> categoryExampleList = new ArrayList<>();
-        Resource resource = resourceLoader.getResource("classpath:" + CATEGORY_EXAMPLE_FILE);
         categoryService.deleteAll();
-        try (InputStream inputStream = new FileInputStream(resource.getFile())) {
-            TypeReference<List<UpsertCategoryRequest>> typeRef = new TypeReference<>() {
-            };
-            categoryExampleList = objectMapper.readValue(inputStream, typeRef);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        List<UpsertCategoryRequest> categoryExampleList = loadResourceFromJson(CATEGORY_EXAMPLE_FILE)
+                .stream()
+                .map(lhm -> UpsertCategoryRequest.builder()
+                        .name(lhm.get(UpsertCategoryRequest.Fields.name))
+                        .build()
+                ).toList();
         categoryExampleList.forEach(c -> categoryService.create(categoryMapper.requestToCategory(c)));
         log.info("Load examples category count {}", categoryExampleList.size());
     }
 
     private void loadExampleNews() {
-        List<UpsertNewsRequest> newsExampleList = new ArrayList<>();
-        Resource resource = resourceLoader.getResource("classpath:" + NEWS_EXAMPLE_FILE);
-        try (InputStream inputStream = new FileInputStream(resource.getFile())) {
-            TypeReference<List<UpsertNewsRequest>> typeRef = new TypeReference<>() {
-            };
-            newsExampleList = objectMapper.readValue(inputStream, typeRef);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        List<UpsertNewsRequest> newsExampleList = loadResourceFromJson(NEWS_EXAMPLE_FILE)
+                .stream()
+                .map(lhm -> UpsertNewsRequest.builder()
+                        .authorName(lhm.get(UpsertNewsRequest.Fields.authorName))
+                        .categoryName(lhm.get(UpsertNewsRequest.Fields.categoryName))
+                        .title(lhm.get(UpsertNewsRequest.Fields.title))
+                        .content(lhm.get(UpsertNewsRequest.Fields.content)).build()
+                ).toList();
         newsExampleList.forEach(n -> newsService.save(newsMapper.requestToNews(n), n.getAuthorName(), n.getCategoryName()));
         log.info("Load examples news count {}", newsExampleList.size());
     }
@@ -112,22 +107,38 @@ public class StartExamplesData {
 
         List<Long> idAllNewsList = newsService.getAllIdNews();
         List<Long> idAllUserList = userService.getAllIdUser();
-        List<UpsertCommentRequest> commentExampleList;
-        Resource resource = resourceLoader.getResource("classpath:" + COMMENT_EXAMPLE_FILE);
-        try (InputStream inputStream = new FileInputStream(resource.getFile())) {
-            TypeReference<List<UpsertCommentRequest>> typeRef = new TypeReference<>() {
-            };
-            commentExampleList = objectMapper.readValue(inputStream, typeRef);
+        List<UpsertCommentRequest> commentExampleList = loadResourceFromJson(COMMENT_EXAMPLE_FILE)
+                .stream()
+                .map(lhm -> UpsertCommentRequest.builder()
+                        .userId(idAllUserList.get(new Random().nextInt(0, idAllUserList.size())))
+                        .newsId(idAllNewsList.get(new Random().nextInt(0, idAllNewsList.size())))
+                        .commentText(lhm.get(UpsertCommentRequest.Fields.commentText))
+                        .build()
+                ).toList();
+        commentExampleList.forEach(c ->
+                commentsService.save(commentsMapper.requestToComment(c), c.getNewsId(), c.getUserId()));
+        log.info("Load examples comments count {}", commentExampleList.size());
+    }
+
+    private List<LinkedHashMap<String, String>> loadResourceFromJson(String file) {
+        List<LinkedHashMap<String, String>> exampleDataList = new ArrayList<>();
+        Resource resource = resourceLoader.getResource("classpath:" + file);
+        URL url;
+        try {
+            url = resource.getURL();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        commentExampleList.forEach(c -> {
-            c.setUserId(idAllUserList.get(new Random().nextInt(0, idAllUserList.size() - 1)));
-            c.setNewsId(idAllNewsList.get(new Random().nextInt(0, idAllNewsList.size() - 1)));
-            commentsService.save(commentsMapper.requestToComment(c),c.getNewsId(),c.getUserId());
-        });
-        log.info("Load examples comments count {}",commentExampleList.size());
-    }
+        try (InputStream inputStream = (url != null) ? url.openStream() : new FileInputStream(resource.getFile())
+        ) {
+            TypeReference<List<LinkedHashMap<String, String>>> typeRef = new TypeReference<>() {
+            };
+            exampleDataList = objectMapper.readValue(inputStream, typeRef);
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return exampleDataList;
+    }
 
 }

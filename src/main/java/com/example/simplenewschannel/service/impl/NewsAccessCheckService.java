@@ -6,7 +6,6 @@ import com.example.simplenewschannel.repository.NewsRepository;
 import com.example.simplenewschannel.service.AccessCheckService;
 import com.example.simplenewschannel.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerMapping;
 
