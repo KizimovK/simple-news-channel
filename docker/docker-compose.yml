@@ -1,7 +1,17 @@
 version: '3'
+
 services:
+  app-backend:
+    image: news-channel:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/db_news
   postgres:
-    image: postgres:16.0
+    image: postgres:16
     ports:
       - "5432:5432"
     environment:
@@ -9,4 +19,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=db_news
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
