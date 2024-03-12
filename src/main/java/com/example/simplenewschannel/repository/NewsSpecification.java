@@ -6,32 +6,11 @@ import com.example.simplenewschannel.entity.News;
 import com.example.simplenewschannel.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.Instant;
 
 public interface NewsSpecification {
     static Specification<News> withFilter(FilterNewsRequest filterRequest) {
         return Specification.where(byAuthorName(filterRequest.getAuthorName()))
-                .and(byCategoryName(filterRequest.getCategoryName()))
-                .and(byCreateAtBefore(filterRequest.getCreateBefore()))
-                .and(byUpdateAtBefore(filterRequest.getUpdateBefore()));
-    }
-
-    static Specification<News> byUpdateAtBefore(Instant updateBefore) {
-        return ((root, query, criteriaBuilder) -> {
-            if (updateBefore == null){
-                return null;
-            }
-            return criteriaBuilder.lessThanOrEqualTo(root.get(News.Fields.timeUpdate), updateBefore);
-        });
-    }
-
-    static Specification<News> byCreateAtBefore(Instant createBefore) {
-        return ((root, query, criteriaBuilder) -> {
-            if (createBefore == null){
-                return null;
-            }
-            return criteriaBuilder.lessThanOrEqualTo(root.get(News.Fields.timeCreate), createBefore);
-        });
+                .and(byCategoryName(filterRequest.getCategoryName()));
     }
 
     static Specification<News> byCategoryName(String categoryName) {

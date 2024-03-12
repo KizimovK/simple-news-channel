@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -104,14 +103,13 @@ public class StartExamplesData {
     }
 
     private void loadExampleComment() {
-
         List<Long> idAllNewsList = newsService.getAllIdNews();
         List<Long> idAllUserList = userService.getAllIdUser();
         List<UpsertCommentRequest> commentExampleList = loadResourceFromJson(COMMENT_EXAMPLE_FILE)
                 .stream()
                 .map(lhm -> UpsertCommentRequest.builder()
-                        .userId(idAllUserList.get(new Random().nextInt(0, idAllUserList.size())))
-                        .newsId(idAllNewsList.get(new Random().nextInt(0, idAllNewsList.size())))
+                        .userId(idAllUserList.get(new Random().nextInt(idAllUserList.size())))
+                        .newsId(idAllNewsList.get(new Random().nextInt(idAllNewsList.size())))
                         .commentText(lhm.get(UpsertCommentRequest.Fields.commentText))
                         .build()
                 ).toList();
@@ -129,16 +127,14 @@ public class StartExamplesData {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        try (InputStream inputStream = (url != null) ? url.openStream() : new FileInputStream(resource.getFile())
+        try (InputStream inputStream = url != null ? url.openStream() : new FileInputStream(resource.getFile())
         ) {
             TypeReference<List<LinkedHashMap<String, String>>> typeRef = new TypeReference<>() {
             };
             exampleDataList = objectMapper.readValue(inputStream, typeRef);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return exampleDataList;
     }
-
 }

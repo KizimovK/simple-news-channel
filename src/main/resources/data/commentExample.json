@@ -1,37 +1,23 @@
 [
   {
-    "userId": 0,
-    "newsId": 0,
     "commentText": "Fine"
   },
   {
-    "userId": 0,
-    "newsId": 0,
     "commentText": "Excellent"
   },
   {
-    "userId": 0,
-    "newsId": 0,
     "commentText": "Well"
   },
   {
-    "userId": 0,
-    "newsId": 0,
     "commentText": "Badly"
   },
   {
-    "userId": 0,
-    "newsId": 0,
     "commentText": "Very bad"
   },
   {
-    "userId": 0,
-    "newsId": 0,
     "commentText": "Shit"
   },
   {
-    "userId": 0,
-    "newsId": 0,
     "commentText": "Ok"
   }
 ]
