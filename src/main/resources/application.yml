@@ -1,8 +1,12 @@
 server:
   port: ${SERVER_PORT:8080}
-evn:
+app:
   example:
     enabled: true
+  jwt:
+    secret: mySecretCode
+    tokenExpiration: 3m
+    refreshTokenExpiration: 30m
 spring:
   jpa:
     generate-ddl: true
