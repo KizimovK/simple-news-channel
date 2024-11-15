@@ -1,11 +1,9 @@
 package com.example.simplenewschannel.service;
 
 import com.example.simplenewschannel.entity.User;
-import com.example.simplenewschannel.listener.StartExamplesData;
+import com.example.simplenewschannel.event.StartExamplesData;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

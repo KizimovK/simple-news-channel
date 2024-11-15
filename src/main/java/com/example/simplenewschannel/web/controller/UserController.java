@@ -17,28 +17,30 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 @Tag(name = "User", description = "User API")
 public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public UserController(UserService userService, UserMapper userMapper) {
-        this.userService = userService;
-        this.userMapper = userMapper;
-    }
 
     @Operation(
             summary = "Get all user",
             description = "Get all users from registration news-channel"
     )
+
     @GetMapping
+
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ModelListResponse<UserResponse>> findAll(@Valid PaginationRequest request) {
         Page<User> userPage = userService.findAll(request.pageRequest());
         return ResponseEntity.ok(ModelListResponse.<UserResponse>builder()
@@ -66,6 +68,8 @@ public class UserController {
             )
     })
     @GetMapping("/{id}")
+
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','USER')")
     public ResponseEntity<UserResponse> findById(@PathVariable long id) {
         return ResponseEntity.ok(userMapper.userToResponse(userService.findById(id)));
     }
@@ -89,6 +93,7 @@ public class UserController {
             )
     })
     @PostMapping
+
     public ResponseEntity<UserResponse> createUser(@RequestBody UpsertUserRequest request) {
         User newUser = userService.save(userMapper.requestToUser(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.userToResponse(newUser));

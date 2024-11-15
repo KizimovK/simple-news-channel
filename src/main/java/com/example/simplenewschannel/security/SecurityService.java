@@ -3,6 +3,7 @@ package com.example.simplenewschannel.security;
 import com.example.simplenewschannel.dto.auth.*;
 import com.example.simplenewschannel.entity.RefreshToken;
 import com.example.simplenewschannel.entity.User;
+import com.example.simplenewschannel.exception.AlreadyExistsException;
 import com.example.simplenewschannel.exception.RefreshTokenException;
 import com.example.simplenewschannel.repository.UserRepository;
 import com.example.simplenewschannel.security.jwt.JwtUtils;
@@ -54,6 +55,12 @@ public class SecurityService {
     }
 
     public void register(CreateUserRequest createUserRequest) {
+        if (userRepository.existsByName(createUserRequest.getUsername())){
+            throw new AlreadyExistsException("Username already exists!");
+        }
+        if (userRepository.existsByEmail(createUserRequest.getEmail())) {
+            throw new AlreadyExistsException("Email already exists!");
+        }
         var user = User.builder()
                 .name(createUserRequest.getUsername())
                 .email(createUserRequest.getEmail())

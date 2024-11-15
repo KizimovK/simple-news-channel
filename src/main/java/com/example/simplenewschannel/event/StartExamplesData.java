@@ -1,4 +1,4 @@
-package com.example.simplenewschannel.listener;
+package com.example.simplenewschannel.event;
 
 import com.example.simplenewschannel.dto.request.UpsertCategoryRequest;
 import com.example.simplenewschannel.dto.request.UpsertCommentRequest;
@@ -35,7 +35,7 @@ import java.util.Random;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix = "evn.example", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "app.example", name = "enabled", havingValue = "true")
 @RequiredArgsConstructor
 public class StartExamplesData {
     private static final String USER_EXAMPLE_FILE = "data/userExample.json";

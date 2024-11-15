@@ -1,9 +1,7 @@
 package com.example.simplenewschannel.web.handler;
 
 import com.example.simplenewschannel.dto.response.ExceptionResponse;
-import com.example.simplenewschannel.exception.AccessiblyCheckException;
-import com.example.simplenewschannel.exception.EntityExistsException;
-import com.example.simplenewschannel.exception.EntityNotFoundException;
+import com.example.simplenewschannel.exception.*;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +12,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 
 import java.util.Map;
@@ -23,27 +23,50 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 @Slf4j
 public class ExceptionControllerHandler {
+
+    @ExceptionHandler(RefreshTokenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ExceptionResponse refreshTokenException(RefreshTokenException exception, WebRequest request) {
+        return buildExceptionResponse(exception,request);
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse alreadyExistsException(AlreadyExistsException exception, WebRequest request) {
+        return buildExceptionResponse(exception, request);
+    }
+
+
     @ExceptionHandler(EntityExistsException.class)
-    public ResponseEntity<ExceptionResponse> existsException(EntityExistsException exception){
-        log.error("Error create or update entity ", exception);
-        return ResponseEntity.badRequest().body(new ExceptionResponse(exception.getMessage()));
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse existsException(EntityExistsException exception, WebRequest request){
+        return buildExceptionResponse(exception, request);
     }
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> notFoundException(EntityNotFoundException exception){
-        log.error("Error not found entity ", exception);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(exception.getMessage()));
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ExceptionResponse notFoundException(EntityNotFoundException exception, WebRequest request){
+        return buildExceptionResponse(exception, request);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionResponse> notValidException(MethodArgumentNotValidException exception){
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse notValidException(MethodArgumentNotValidException exception, WebRequest request){
         BindingResult bindingResult = exception.getBindingResult();
         Map<String, String> errorMessages = bindingResult.getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-        return ResponseEntity.badRequest().body(new ExceptionResponse(errorMessages.toString()));
+        return buildExceptionResponse(exception, request);
     }
     @ExceptionHandler(AccessiblyCheckException.class)
-    public ResponseEntity<ExceptionResponse> notAccessiblyCheckedException(AccessiblyCheckException exception){
-        log.error("The user does not have access");
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ExceptionResponse(exception.getMessage()));
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ExceptionResponse notAccessiblyCheckedException(AccessiblyCheckException exception, WebRequest request){
+        return buildExceptionResponse(exception, request);
     }
+
+    private ExceptionResponse buildExceptionResponse(Exception exception, WebRequest request) {
+        return ExceptionResponse.builder()
+                .message(exception.getMessage())
+                .description(request.getDescription(false))
+                .build();
+    }
+
 }
