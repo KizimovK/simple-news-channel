@@ -7,6 +7,7 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+      - redis
     environment:
       - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/db_news
@@ -20,6 +21,10 @@ services:
       - POSTGRES_DB=db_news
     volumes:
       - db_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7.2.4
+    ports:
+      - "6379:6379"
 
 volumes:
   db_data:

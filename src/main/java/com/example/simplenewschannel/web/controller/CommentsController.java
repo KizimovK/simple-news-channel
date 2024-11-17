@@ -9,6 +9,7 @@ import com.example.simplenewschannel.dto.response.ExceptionResponse;
 import com.example.simplenewschannel.dto.response.ModelListResponse;
 import com.example.simplenewschannel.entity.Comment;
 import com.example.simplenewschannel.mapper.CommentsMapper;
+import com.example.simplenewschannel.security.AppUserDetails;
 import com.example.simplenewschannel.service.CommentsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +19,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -54,13 +59,15 @@ public class CommentsController {
             )
     })
     @GetMapping
-    public ResponseEntity<ModelListResponse<CommentResponse>> getCommentsByNews(@Valid PaginationRequest request,
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public ModelListResponse<CommentResponse> getCommentsByNews(@Valid PaginationRequest request,
                                                                                 @RequestParam long newsId){
         Page<Comment> commentPage = commentsService.findAllByNewsId(newsId, request.pageRequest());
-        return ResponseEntity.ok(ModelListResponse.<CommentResponse>builder()
+        return ModelListResponse.<CommentResponse>builder()
                 .totalCount(commentPage.getTotalElements())
                 .data(commentPage.stream().map(commentsMapper::commentToResponse).toList())
-                .build());
+                .build();
     }
     @Operation(
             summary = "Get comment by id",
@@ -84,8 +91,10 @@ public class CommentsController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<CommentResponse> getComment(@PathVariable long id){
-        return ResponseEntity.ok(commentsMapper.commentToResponse(commentsService.findById(id)));
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public CommentResponse getComment(@PathVariable("id") long idComment){
+        return commentsMapper.commentToResponse(commentsService.findById(idComment));
     }
     @Operation(
             summary = "Create comment",
@@ -113,10 +122,13 @@ public class CommentsController {
             )
     })
     @PostMapping
-    public ResponseEntity<CommentResponse> createComment(@RequestBody UpsertCommentRequest request){
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public CommentResponse createComment(@RequestBody UpsertCommentRequest request,
+                                         @AuthenticationPrincipal AppUserDetails userDetails){
         Comment newComment = commentsService.save(commentsMapper.requestToComment(request),
-                request.getNewsId(),request.getUserId());
-        return ResponseEntity.ok(commentsMapper.commentToResponse(newComment));
+                request.getNewsId(),userDetails.getId());
+        return commentsMapper.commentToResponse(newComment);
     }
     @Operation(
             summary = "Update comment",
@@ -151,9 +163,13 @@ public class CommentsController {
     })
     @Accessible(checkBy = AccessType.COMMENT)
     @PutMapping("/{id}")
-    ResponseEntity<CommentResponse> updateComment(@PathVariable long id, @RequestBody UpsertCommentRequest request){
-        Comment updateComment = commentsService.update(commentsMapper.requestToComment(request), id);
-        return ResponseEntity.ok(commentsMapper.commentToResponse(updateComment));
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public CommentResponse updateComment(@PathVariable("id") long idComment,
+                                         @RequestBody UpsertCommentRequest request,
+                                         @AuthenticationPrincipal AppUserDetails userDetails){
+        Comment updateComment = commentsService.update(commentsMapper.requestToComment(request), idComment);
+        return commentsMapper.commentToResponse(updateComment);
     }
     @Operation(
             summary = "Delete comment by Id",
@@ -178,8 +194,10 @@ public class CommentsController {
     })
     @Accessible(checkBy = AccessType.COMMENT)
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteComment(@PathVariable long id, long userId){
-        commentsService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public void deleteComment(@PathVariable("id") long idComment,
+                              @AuthenticationPrincipal AppUserDetails userDetails){
+        commentsService.deleteById(idComment);
     }
 }

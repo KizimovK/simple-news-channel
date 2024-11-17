@@ -16,7 +16,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,13 +37,14 @@ public class CategoryController {
             description = "Get all categories news from news-channel"
     )
     @GetMapping
-    public ResponseEntity<ModelListResponse<CategoryResponse>> findAll(@Valid PaginationRequest request){
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public ModelListResponse<CategoryResponse> findAll(@Valid PaginationRequest request){
         Page<Category> categories = categoryService.findAll(request.pageRequest());
-        return ResponseEntity.ok(ModelListResponse.<CategoryResponse>builder()
+        return ModelListResponse.<CategoryResponse>builder()
                 .totalCount(categories.getTotalElements())
                 .data(categories.stream().map(categoryMapper::categoryToResponse).toList())
-                .build()
-        );
+                .build();
     }
     @Operation(
             summary = "Get category by Id",
@@ -62,8 +65,10 @@ public class CategoryController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponse> findById(@PathVariable long id){
-        return ResponseEntity.ok(categoryMapper.categoryToResponse(categoryService.findById(id)));
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public CategoryResponse findById(@PathVariable long id){
+        return categoryMapper.categoryToResponse(categoryService.findById(id));
     }
     @Operation(
             summary = "Create category news",
@@ -84,9 +89,11 @@ public class CategoryController {
             )
     })
     @PostMapping
-    public ResponseEntity<CategoryResponse> createNewsCategory(@RequestBody UpsertCategoryRequest request){
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
+    public CategoryResponse createNewsCategory(@RequestBody UpsertCategoryRequest request){
         Category categoryNew = categoryService.create(categoryMapper.requestToCategory(request));
-        return ResponseEntity.ok(categoryMapper.categoryToResponse(categoryNew));
+        return categoryMapper.categoryToResponse(categoryNew);
     }
 
 }

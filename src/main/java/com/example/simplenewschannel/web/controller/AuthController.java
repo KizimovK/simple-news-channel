@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final SecurityService securityService;
-    private final UserRepository userRepository;
 
     @PostMapping("/signin")
     @ResponseStatus(HttpStatus.OK)
@@ -31,7 +30,7 @@ public class AuthController {
         return new SimpleResponse("Created new user!");
     }
 
-    @PostMapping("refresh-token")
+    @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
     public RefreshTokenResponse refreshToken(@RequestBody RefreshTokenRequest request) {
         return securityService.refreshToken(request);

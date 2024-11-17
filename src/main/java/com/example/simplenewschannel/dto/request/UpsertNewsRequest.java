@@ -16,8 +16,6 @@ import lombok.experimental.FieldNameConstants;
 @FieldNameConstants
 public class UpsertNewsRequest {
     @NotNull
-    private String authorName;
-    @NotNull
     private String categoryName;
     @NotNull
     private String title;

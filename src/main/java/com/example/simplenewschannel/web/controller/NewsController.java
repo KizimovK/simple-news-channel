@@ -19,6 +19,9 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -56,13 +59,15 @@ public class NewsController {
             )
     })
     @GetMapping
-    public ResponseEntity<ModelListResponse<BriefNewsResponse>> filterBy(@Valid PaginationRequest paginationRequest,
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public ModelListResponse<BriefNewsResponse> filterBy(@Valid PaginationRequest paginationRequest,
                                                                          FilterNewsRequest filterRequest){
         Page<News> filterNews = newsService.filterBy(paginationRequest, filterRequest);
-        return ResponseEntity.ok(ModelListResponse.<BriefNewsResponse>builder()
+        return ModelListResponse.<BriefNewsResponse>builder()
                 .totalCount(filterNews.getTotalElements())
                 .data(filterNews.stream().map(newsMapper::newsToBriefResponse).toList())
-                .build());
+                .build();
     }
     @Operation(
             summary = "Get news by Id",
@@ -83,8 +88,10 @@ public class NewsController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<NewsResponse> findById(@PathVariable long id){
-        return ResponseEntity.ok(newsMapper.newsToResponse(newsService.findById(id)));
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public NewsResponse findById(@PathVariable long id){
+        return newsMapper.newsToResponse(newsService.findById(id));
     }
     @Operation(
             summary = "Create News",
@@ -112,10 +119,13 @@ public class NewsController {
             )
     })
     @PostMapping
-    public ResponseEntity<NewsResponse> createNews(@RequestBody UpsertNewsRequest request){
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public NewsResponse createNews(@RequestBody UpsertNewsRequest request,
+                                   @AuthenticationPrincipal UserDetails userDetails){
         News newNews = newsService.save(newsMapper.requestToNews(request)
-                ,request.getAuthorName(),request.getCategoryName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(newsMapper.newsToResponse(newNews));
+                ,userDetails.getUsername(), request.getCategoryName());
+        return newsMapper.newsToResponse(newNews);
     }
     @Operation(
             summary = "Update News",
@@ -151,10 +161,13 @@ public class NewsController {
     })
     @Accessible(checkBy = AccessType.NEWS)
     @PutMapping("/{id}")
-    public ResponseEntity<NewsResponse> updateNews(@PathVariable long id,
-                                                   @RequestBody UpsertNewsRequest request){
-        News updateNews = newsService.updateNews(newsMapper.requestToNews(request), id);
-        return ResponseEntity.ok(newsMapper.newsToResponse(updateNews));
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public NewsResponse updateNews(@PathVariable(name = "id") long idNews,
+                                   @AuthenticationPrincipal UserDetails userDetails,
+                                   @RequestBody UpsertNewsRequest request){
+        News updateNews = newsService.updateNews(newsMapper.requestToNews(request), idNews) ;
+        return newsMapper.newsToResponse(updateNews);
     }
     @Operation(
             summary = "Delete News by Id",
@@ -179,8 +192,11 @@ public class NewsController {
     })
     @Accessible(checkBy = AccessType.NEWS)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNewsById(@PathVariable long id, long userId){
-        newsService.deleteById(id);
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')")
+    public ResponseEntity<Void> deleteNewsById(@PathVariable("id") long idNews,
+                                               @AuthenticationPrincipal UserDetails userDetails){
+        newsService.deleteById(idNews);
         return ResponseEntity.noContent().build();
     }
 

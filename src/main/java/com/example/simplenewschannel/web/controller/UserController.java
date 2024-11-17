@@ -39,14 +39,14 @@ public class UserController {
     )
 
     @GetMapping
-
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ModelListResponse<UserResponse>> findAll(@Valid PaginationRequest request) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.OK)
+    public ModelListResponse<UserResponse> findAll(@Valid PaginationRequest request) {
         Page<User> userPage = userService.findAll(request.pageRequest());
-        return ResponseEntity.ok(ModelListResponse.<UserResponse>builder()
+        return ModelListResponse.<UserResponse>builder()
                 .totalCount(userPage.getTotalElements())
                 .data(userPage.stream().map(userMapper::userToResponse).toList())
-                .build());
+                .build();
     }
 
     @Operation(
@@ -68,10 +68,10 @@ public class UserController {
             )
     })
     @GetMapping("/{id}")
-
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','USER')")
-    public ResponseEntity<UserResponse> findById(@PathVariable long id) {
-        return ResponseEntity.ok(userMapper.userToResponse(userService.findById(id)));
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponse findById(@PathVariable long id) {
+        return userMapper.userToResponse(userService.findById(id));
     }
 
     @Operation(
@@ -93,10 +93,11 @@ public class UserController {
             )
     })
     @PostMapping
-
-    public ResponseEntity<UserResponse> createUser(@RequestBody UpsertUserRequest request) {
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse createUser(@RequestBody UpsertUserRequest request) {
         User newUser = userService.save(userMapper.requestToUser(request));
-        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.userToResponse(newUser));
+        return userMapper.userToResponse(newUser);
     }
 
     @Operation(
@@ -124,10 +125,12 @@ public class UserController {
             )
     })
     @Accessible(checkBy = AccessType.USER)
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable long id, @RequestBody UpsertUserRequest request) {
+    public UserResponse updateUser(@PathVariable long id, @RequestBody UpsertUserRequest request) {
         User updateUser = userService.update(userMapper.requestToUser(id, request));
-        return ResponseEntity.status(HttpStatus.OK).body(userMapper.userToResponse(updateUser));
+        return userMapper.userToResponse(updateUser);
     }
 
     @Operation(
@@ -136,9 +139,10 @@ public class UserController {
     )
     @Accessible(checkBy = AccessType.USER)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
+    public void deleteUser(@PathVariable("id") long id) {
         userService.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 
 }
