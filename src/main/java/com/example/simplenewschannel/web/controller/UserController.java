@@ -124,7 +124,7 @@ public class UserController {
                     }
             )
     })
-    @Accessible(checkBy = AccessType.USER)
+    @Accessible(checkBy = AccessType.USER, availableForModerator = true)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")
     @PutMapping("/{id}")
@@ -137,7 +137,7 @@ public class UserController {
             summary = "Delete user by Id",
             description = "Delete user by Id"
     )
-    @Accessible(checkBy = AccessType.USER)
+    @Accessible(checkBy = AccessType.USER, availableForModerator = true)
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR','ROLE_USER')")

@@ -28,15 +28,18 @@ public class User {
     private String password;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     @ToString.Exclude
+    @Builder.Default
     private List<News> newsList = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @ToString.Exclude
+    @Builder.Default
     private List<Comment> commentsList = new ArrayList<>();
 
     @ElementCollection(targetClass = RoleType.class, fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "roles", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Set<RoleType> roles = new HashSet<>();
 
     public void addNews(News news){

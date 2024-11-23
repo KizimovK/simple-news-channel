@@ -52,8 +52,4 @@ public class CategoryServiceImpl implements CategoryService {
                         MessageFormat.format("Категория с таким названием {0} не найдена ", categoryName)));
     }
 
-    @Override
-    public void deleteAll() {
-        categoryRepository.deleteAll();
-    }
 }

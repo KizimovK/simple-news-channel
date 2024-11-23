@@ -66,12 +66,5 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByName(name).orElseThrow(()-> new EntityNotFoundException(
                 MessageFormat.format("Пользователь (автор) с таким именем {0} не найден", name)));
     }
-    public void deleteAll(){
-        userRepository.deleteAll();
-    }
 
-    @Override
-    public List<Long> getAllIdUser() {
-        return userRepository.findAllId();
-    }
 }
