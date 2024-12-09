@@ -15,6 +15,5 @@ import lombok.experimental.FieldNameConstants;
 public class UpsertCommentRequest {
     @NotNull
     private long newsId;
-
     private String commentText;
 }

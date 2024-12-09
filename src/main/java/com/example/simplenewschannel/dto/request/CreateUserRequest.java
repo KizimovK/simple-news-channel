@@ -1,4 +1,4 @@
-package com.example.simplenewschannel.dto.auth;
+package com.example.simplenewschannel.dto.request;
 
 import com.example.simplenewschannel.entity.RoleType;
 import lombok.AllArgsConstructor;

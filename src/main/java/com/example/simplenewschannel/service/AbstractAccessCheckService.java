@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractAccessCheckService implements AccessCheckService {
-    private static final String ID = "id";
+    private static final String ID = "Id";
 
     @Override
     @SuppressWarnings("unchecked")
@@ -24,7 +24,7 @@ public abstract class AbstractAccessCheckService implements AccessCheckService {
         }
         var pathVariable =
                 (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        long id = Long.getLong(pathVariable.get(ID));
+        long id = Long.parseLong(pathVariable.get(accessible.checkBy().toString().toLowerCase()+ID));
         var user = (AppUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         long idUser = user.getId();
 

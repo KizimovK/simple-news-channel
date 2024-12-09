@@ -4,7 +4,6 @@ import com.example.simplenewschannel.security.AppUserDetails;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -29,21 +28,21 @@ public class JwtUtils {
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + tokenExpiration.toMillis()))
-                .signWith(SignatureAlgorithm.ES512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 
     public String getUsername(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
 
     public boolean validate(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJwt(authToken);
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
             log.error("Invalid signature: {}", e.getMessage());
@@ -51,9 +50,11 @@ public class JwtUtils {
             log.error("Invalid token: {} ", e.getMessage());
         } catch (ExpiredJwtException e) {
             log.error("Token is expired: {} ", e.getMessage());
-        } catch (UnsupportedJwtException e) {
+        }
+        catch (UnsupportedJwtException e) {
             log.error("Token is unsupported: {} ", e.getMessage());
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e) {
             log.error("Claims string is empty: {} ", e.getMessage());
         }
         return false;

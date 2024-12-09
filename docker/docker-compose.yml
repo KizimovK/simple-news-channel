@@ -7,7 +7,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=db_books
+      - POSTGRES_DB=db_news
     volumes:
       - db_data:/var/lib/postgresql/data
   redis:

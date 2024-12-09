@@ -13,6 +13,7 @@ import com.example.simplenewschannel.service.NewsService;
 import com.example.simplenewschannel.service.UserService;
 import com.example.simplenewschannel.utils.BeanUtils;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -22,18 +23,11 @@ import java.text.MessageFormat;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
     private final UserService userService;
     private final CategoryService categoryService;
-
-    public NewsServiceImpl(NewsRepository newsRepository,
-                           UserService userService,
-                           CategoryService categoryService) {
-        this.newsRepository = newsRepository;
-        this.userService = userService;
-        this.categoryService = categoryService;
-    }
 
     @Override
     public News findById(long id) {
@@ -51,7 +45,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public News save(News news, String userName, String categoryName) {
-        User author = userService.findByName(userName);
+        User author = userService.findByNameUserAccount(userName);
         Category category = categoryService.findByName(categoryName);
         news.setAuthor(author);
         news.setCategory(category);

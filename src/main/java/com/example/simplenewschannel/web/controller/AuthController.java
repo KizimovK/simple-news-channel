@@ -1,10 +1,11 @@
 package com.example.simplenewschannel.web.controller;
 
 import com.example.simplenewschannel.dto.auth.*;
-import com.example.simplenewschannel.repository.UserRepository;
+import com.example.simplenewschannel.dto.response.SimpleResponse;
 import com.example.simplenewschannel.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +24,6 @@ public class AuthController {
         return securityService.authenticationUser(loginRequest);
     }
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public SimpleResponse registerNewUser(@RequestBody CreateUserRequest request) {
-        securityService.register(request);
-        return new SimpleResponse("Created new user!");
-    }
 
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
@@ -37,6 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MODERATOR') or hasRole('ROLE_USER')")
     @ResponseStatus(HttpStatus.OK)
     public SimpleResponse logoutUser(@AuthenticationPrincipal UserDetails userDetails) {
         securityService.logout();

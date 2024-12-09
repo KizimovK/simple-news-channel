@@ -11,6 +11,6 @@ public interface RefreshTokenService {
     RefreshToken createRefreshToken(Long userId);
 
     RefreshToken checkRefreshToken(RefreshToken token);
-
+    boolean isHasRefreshTokenByUserId(Long userId);
     void deleteByUserId(Long userId);
 }

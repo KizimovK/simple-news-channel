@@ -9,6 +9,7 @@ import com.example.simplenewschannel.service.NewsService;
 import com.example.simplenewschannel.service.UserService;
 import com.example.simplenewschannel.utils.BeanUtils;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.MessageFormat;
 import java.util.List;
 @Service
+@RequiredArgsConstructor
 public class CommentsServiceImpl implements CommentsService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final NewsService newsService;
-
-    public CommentsServiceImpl(CommentRepository commentRepository, UserService userService, NewsService newsService) {
-        this.commentRepository = commentRepository;
-        this.userService = userService;
-        this.newsService = newsService;
-    }
 
     @Override
     public List<Comment> findAll() {
@@ -49,7 +45,7 @@ public class CommentsServiceImpl implements CommentsService {
     @Transactional
     public Comment save(Comment comment, long newsId, long userId) {
         News news = newsService.findById(newsId);
-        User user = userService.findById(userId);
+        User user = userService.findByIdUserAccount(userId);
         comment.setUser(user);
         comment.setNews(news);
         return commentRepository.save(comment);

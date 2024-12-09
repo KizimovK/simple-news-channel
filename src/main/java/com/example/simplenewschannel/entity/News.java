@@ -31,7 +31,7 @@ public class News {
     private Category category;
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1024)
     private String content;
     @CreationTimestamp
     private Instant timeCreate;

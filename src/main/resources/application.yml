@@ -3,8 +3,8 @@ server:
 app:
   jwt:
     secret: mySecretCode
-    tokenExpiration: 3m
-    refreshTokenExpiration: 30m
+    tokenExpiration: 100m
+    refreshTokenExpiration: 300m
 spring:
   data:
     redis:
@@ -12,6 +12,8 @@ spring:
       port: 6379
   jpa:
     generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
   datasource:
     url: jdbc:postgresql://localhost:5432/db_news
     username: postgres

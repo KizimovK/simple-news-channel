@@ -2,9 +2,7 @@ package com.example.simplenewschannel.service;
 
 import com.example.simplenewschannel.entity.Comment;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
 import java.util.List;
 
 public interface CommentsService {
@@ -20,4 +18,6 @@ public interface CommentsService {
 
 
     void deleteById(long id);
+
+
 }

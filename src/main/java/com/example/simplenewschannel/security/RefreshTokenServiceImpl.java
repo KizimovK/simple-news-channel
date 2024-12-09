@@ -3,7 +3,6 @@ package com.example.simplenewschannel.security;
 import com.example.simplenewschannel.entity.RefreshToken;
 import com.example.simplenewschannel.exception.RefreshTokenException;
 import com.example.simplenewschannel.repository.RefreshTokenRepository;
-import com.example.simplenewschannel.security.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,6 +20,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private Duration refreshTokenExpiration;
 
     private final RefreshTokenRepository refreshTokenRepository;
+
     @Override
     public Optional<RefreshToken> findByRefreshToken(String token) {
         return refreshTokenRepository.findByToken(token);
@@ -48,6 +48,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public void deleteByUserId(Long userId) {
-        refreshTokenRepository.deleteByUserId(userId);
+        refreshTokenRepository.findByUserId(userId)
+                .ifPresent(refreshTokenRepository::delete);
+
+    }
+    @Override
+    public boolean isHasRefreshTokenByUserId(Long userId) {
+        return refreshTokenRepository.existsByUserId(userId);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.simplenewschannel.dto.auth;
+package com.example.simplenewschannel.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
